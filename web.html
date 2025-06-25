@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+        
+	
+
+	
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consigue Mensajes Extra</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-hover-color: #0056b3;
+            --secondary-color: #6c757d;
+            --background-color: #f0f2f5;
+            --text-color: #333;
+            --card-bg-color: #ffffff;
+            --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .messages-container {
+            background-color: var(--card-bg-color);
+            padding: 30px 20px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
+        }
+
+        .messages-container h1 {
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0;
+            line-height: 1;
+        }
+
+        .messages-container p {
+            font-size: 1.1rem;
+            color: var(--secondary-color);
+            margin: 10px 0 0 0;
+        }
+
+        .reward-button {
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            padding: 20px 30px;
+            width: 100%;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+        }
+
+        .reward-button:hover {
+            background-color: var(--primary-hover-color);
+            transform: translateY(-2px);
+        }
+        
+        .reward-button:disabled {
+            background-color: #9dbdff;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .footer-link {
+            margin-top: 40px;
+        }
+
+        .footer-link a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="messages-container">
+            <h1 id="messages-left">...</h1>
+            <p>Mensajes Disponibles</p>
+        </div>
+
+        <button id="rewardButton" class="reward-button">Consigue 20 mensajes</button>
+
+        <div class="footer-link">
+            <a id="noAdsLink" href="#">¿No quieres publicidad?</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- CONFIGURACIÓN (RELLENA ESTAS VARIABLES) ---
+
+            // 2. ID de la Zona de Anuncios de Monetag para "Rewarded Ads"
+            const MONETAG_ZONE_ID = '9479446'; 
+
+            // 3. Token de tu Bot de Telegram (obtenido de BotFather)
+            const TELEGRAM_BOT_TOKEN = '8196907959:AAErI_h__bMucU7t_Gv5WBl1htROvo14k9w'; // <-- ¡Pega el Token de tu Bot aquí!
+
+            // 4. ID del Chat de tu grupo de Telegram
+            const TELEGRAM_CHAT_ID = '+qBkKbzrii55lMGM8'; // <-- ¡Pega el ID del Chat aquí!
+            
+            // 5. URL para el botón de "sin publicidad"
+            const NO_ADS_URL = 'https://t.me/tu_canal_de_pago_o_web'; // <-- ¡Pega tu URL aquí!
+
+            // --- FIN DE LA CONFIGURACIÓN ---
+
+
+            // Referencias a los elementos del DOM
+            const messagesLeftElement = document.getElementById('messages-left');
+            const rewardButton = document.getElementById('rewardButton');
+            const noAdsLink = document.getElementById('noAdsLink');
+            
+            // --- ADVERTENCIA DE SEGURIDAD ---
+            if (TELEGRAM_BOT_TOKEN === 'TU_BOT_TOKEN' || TELEGRAM_CHAT_ID === 'ID_DEL_GRUPO_DE_TELEGRAM') {
+                console.error("ADVERTENCIA: Debes configurar tu TELEGRAM_BOT_TOKEN y TELEGRAM_CHAT_ID en el script.");
+                rewardButton.disabled = true;
+                rewardButton.textContent = 'Configuración Requerida';
+            }
+
+            // --- LÓGICA DE LA PÁGINA ---
+
+            // 1. Obtener parámetros de la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const telegramUser = urlParams.get('user') || 'usuario_desconocido';
+            const messagesLeft = urlParams.get('messages') || '0';
+
+            // 2. Actualizar la interfaz
+            messagesLeftElement.textContent = messagesLeft;
+            noAdsLink.href = NO_ADS_URL;
+
+            // 3. Función para enviar el mensaje a Telegram
+            async function sendTelegramMessage(user) {
+                const messageText = `✅ Recompensa reclamada por el usuario: @${user}`;
+                const apiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+
+                console.log('Enviando mensaje a Telegram...');
+                rewardButton.disabled = true;
+                rewardButton.textContent = 'Procesando...';
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            chat_id: TELEGRAM_CHAT_ID,
+                            text: messageText,
+                        }),
+                    });
+
+                    const data = await response.json();
+
+                    if (data.ok) {
+                        console.log('Mensaje enviado con éxito a Telegram.');
+                        rewardButton.textContent = '¡Recompensa Obtenida!';
+                    } else {
+                        console.error('Error al enviar el mensaje:', data.description);
+                        rewardButton.textContent = 'Error al reclamar';
+                    }
+                } catch (error) {
+                    console.error('Error de red al contactar con la API de Telegram:', error);
+                    rewardButton.textContent = 'Error de Conexión';
+                }
+            }
+            
+            // 4. Configurar el objeto del Rewarded Ad de Monetag
+            // ¡IMPORTANTE! La estructura real puede variar. Consulta la documentación de Monetag.
+            // Esto es un ejemplo de cómo suelen funcionar estas APIs.
+            var monetagRewarded = {
+                onComplete: () => {
+                    console.log('Anuncio completado. El usuario ha ganado la recompensa.');
+                    sendTelegramMessage(telegramUser);
+                },
+                onClose: () => {
+                    console.log('El anuncio se ha cerrado.');
+                    rewardButton.disabled = false;
+                    rewardButton.textContent = 'Consigue 20 mensajes';
+                },
+                onError: () => {
+                    console.error('Ha ocurrido un error al cargar el anuncio.');
+                    rewardButton.disabled = false;
+                    rewardButton.textContent = 'Error, intenta de nuevo';
+                }
+            };
+            
+            // 5. Asignar el evento al botón
+            rewardButton.addEventListener('click', () => {
+                console.log('Botón pulsado. Solicitando anuncio recompensado...');
+                rewardButton.disabled = true;
+                rewardButton.textContent = 'Cargando...';
+
+                // Llama al SDK de Monetag
+                if (typeof ophoacit !== 'undefined' && typeof ophoacit.rewarded !== 'undefined') {
+                    // Esta es la llamada real que deberías usar
+                    ophoacit.rewarded.show({
+                        zoneId: MONETAG_ZONE_ID,
+                        onComplete: monetagRewarded.onComplete,
+                        onClose: monetagRewarded.onClose,
+                        onError: monetagRewarded.onError,
+                    });
+                } else {
+                    // Simulación para probar sin el SDK de Monetag
+                    console.warn('SDK de Monetag no encontrado. Ejecutando simulación de prueba.');
+                    setTimeout(() => {
+                        monetagRewarded.onComplete(); // Simula que la recompensa se concedió tras 5 segundos
+                    }, 5000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
