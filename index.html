@@ -2,244 +2,221 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consigue Mensajes Extra</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Color Rush</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #007bff;
-            --primary-hover-color: #0056b3;
-            --secondary-color: #6c757d;
-            --background-color: #f0f2f5;
-            --text-color: #333;
-            --card-bg-color: #ffffff;
-            --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --bg-color: #1a1a2e;
+            --primary-color: #16213e;
+            --secondary-color: #0f3460;
+            --accent-color: #e94560;
+            --text-color: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.4);
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--background-color);
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            overflow: hidden;
             box-sizing: border-box;
         }
 
-        .container {
-            text-align: center;
+        .game-container {
+            width: 100%;
             max-width: 400px;
-            width: 100%;
-        }
-
-        .messages-container {
-            background-color: var(--card-bg-color);
-            padding: 30px 20px;
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 30px;
-        }
-
-        .messages-container h1 {
-            font-size: 5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin: 0;
-            line-height: 1;
-        }
-
-        .messages-container p {
-            font-size: 1.1rem;
-            color: var(--secondary-color);
-            margin: 10px 0 0 0;
-        }
-
-        .reward-button {
             background-color: var(--primary-color);
-            color: white;
-            font-size: 1.2rem;
-            font-weight: 600;
-            border: none;
-            border-radius: 8px;
-            padding: 20px 30px;
-            width: 100%;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-sizing: border-box;
         }
 
-        .reward-button:hover {
-            background-color: var(--primary-hover-color);
-            transform: translateY(-2px);
+        /* --- Pantallas de Juego --- */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--primary-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            z-index: 10;
+        }
+
+        .screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(1.1);
         }
         
-        .reward-button:disabled {
-            background-color: #9dbdff;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
+        #start-screen h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--accent-color);
+            margin: 0;
+            text-shadow: 0 4px 10px var(--shadow-color);
         }
 
-        .footer-link {
-            margin-top: 40px;
+        #start-screen p, #end-screen p {
+            font-weight: 700;
+            font-size: 1rem;
+            margin: 15px 20px;
+            line-height: 1.5;
         }
 
-        .footer-link a {
-            color: var(--secondary-color);
-            text-decoration: none;
-            transition: color 0.3s ease;
+        .button {
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: 10px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            text-transform: uppercase;
         }
 
-        .footer-link a:hover {
-            color: var(--primary-color);
-            text-decoration: underline;
+        .button:hover {
+            background-color: #ff6b81;
+            transform: translateY(-3px);
         }
+
+        /* --- Interfaz del Juego --- */
+        .game-ui {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .score-display {
+            font-size: 1.5rem;
+            font-weight: 900;
+        }
+
+        #timer-bar {
+            width: 100%;
+            height: 12px;
+            background-color: var(--secondary-color);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        #timer-bar-inner {
+            height: 100%;
+            width: 100%;
+            background-color: var(--accent-color);
+            border-radius: 6px;
+            transition: width 0.1s linear;
+        }
+
+        #word-container {
+            margin: 40px 0;
+            min-height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #word {
+            font-size: 3.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            text-shadow: 0 4px 10px var(--shadow-color);
+        }
+
+        #buttons-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .color-button {
+            padding: 25px 10px;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, filter 0.2s;
+        }
+
+        .color-button:hover {
+            filter: brightness(1.1);
+        }
+        
+        .color-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Efecto de feedback */
+        .correct-flash {
+            animation: flash-green 0.3s ease;
+        }
+        .wrong-flash {
+            animation: flash-red 0.3s ease;
+        }
+
+        @keyframes flash-green {
+            0% { background-color: var(--primary-color); }
+            50% { background-color: #2ecc71; }
+            100% { background-color: var(--primary-color); }
+        }
+        @keyframes flash-red {
+            0% { background-color: var(--primary-color); }
+            50% { background-color: #e74c3c; }
+            100% { background-color: var(--primary-color); }
+        }
+
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="messages-container">
-            <h1 id="messages-left">...</h1>
-            <p>Mensajes Disponibles</p>
+    <div class="game-container" id="game-container">
+        
+        <div id="start-screen" class="screen">
+            <h1>Color Rush</h1>
+            <p>Haz clic en el botón del color que corresponde a la palabra, no al color del texto.</p>
+            <button id="start-button" class="button">Empezar</button>
         </div>
 
-        <button id="rewardButton" class="reward-button">Consigue 20 mensajes</button>
-
-        <div class="footer-link">
-            <a id="noAdsLink" href="#">¿No quieres publicidad?</a>
+        <div id="game-screen" class="hidden">
+            <div class="game-ui">
+                <div class="score-display">PUNTOS: <span id="score">0</span></div>
+            </div>
+            
+            <div id="timer-bar">
+                <div id="timer-bar-inner"></div>
+            </div>
+            
+            <div id="word-container">
+                <span id="word"></span>
+            </div>
+            
+            <div id="buttons-container">
+                </div>
         </div>
-    </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- CONFIGURACIÓN (RELLENA ESTAS VARIABLES) ---
-
-            // 2. ID de la Zona de Anuncios de Monetag para "Rewarded Ads"
-            const MONETAG_ZONE_ID = '9479446'; 
-
-            // 3. Token de tu Bot de Telegram (obtenido de BotFather)
-            const TELEGRAM_BOT_TOKEN = '8196907959:AAErI_h__bMucU7t_Gv5WBl1htROvo14k9w'; // <-- ¡Pega el Token de tu Bot aquí!
-
-            // 4. ID del Chat de tu grupo de Telegram
-            const TELEGRAM_CHAT_ID = '+qBkKbzrii55lMGM8'; // <-- ¡Pega el ID del Chat aquí!
-            
-            // 5. URL para el botón de "sin publicidad"
-            const NO_ADS_URL = 'https://t.me/tu_canal_de_pago_o_web'; // <-- ¡Pega tu URL aquí!
-
-            // --- FIN DE LA CONFIGURACIÓN ---
-
-
-            // Referencias a los elementos del DOM
-            const messagesLeftElement = document.getElementById('messages-left');
-            const rewardButton = document.getElementById('rewardButton');
-            const noAdsLink = document.getElementById('noAdsLink');
-            
-            // --- ADVERTENCIA DE SEGURIDAD ---
-            if (TELEGRAM_BOT_TOKEN === 'TU_BOT_TOKEN' || TELEGRAM_CHAT_ID === 'ID_DEL_GRUPO_DE_TELEGRAM') {
-                console.error("ADVERTENCIA: Debes configurar tu TELEGRAM_BOT_TOKEN y TELEGRAM_CHAT_ID en el script.");
-                rewardButton.disabled = true;
-                rewardButton.textContent = 'Configuración Requerida';
-            }
-
-            // --- LÓGICA DE LA PÁGINA ---
-
-            // 1. Obtener parámetros de la URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const telegramUser = urlParams.get('user') || 'usuario_desconocido';
-            const messagesLeft = urlParams.get('messages') || '0';
-
-            // 2. Actualizar la interfaz
-            messagesLeftElement.textContent = messagesLeft;
-            noAdsLink.href = NO_ADS_URL;
-
-            // 3. Función para enviar el mensaje a Telegram
-            async function sendTelegramMessage(user) {
-                const messageText = `✅ Recompensa reclamada por el usuario: @${user}`;
-                const apiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-
-                console.log('Enviando mensaje a Telegram...');
-                rewardButton.disabled = true;
-                rewardButton.textContent = 'Procesando...';
-
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            chat_id: TELEGRAM_CHAT_ID,
-                            text: messageText,
-                        }),
-                    });
-
-                    const data = await response.json();
-
-                    if (data.ok) {
-                        console.log('Mensaje enviado con éxito a Telegram.');
-                        rewardButton.textContent = '¡Recompensa Obtenida!';
-                    } else {
-                        console.error('Error al enviar el mensaje:', data.description);
-                        rewardButton.textContent = 'Error al reclamar';
-                    }
-                } catch (error) {
-                    console.error('Error de red al contactar con la API de Telegram:', error);
-                    rewardButton.textContent = 'Error de Conexión';
-                }
-            }
-            
-            // 4. Configurar el objeto del Rewarded Ad de Monetag
-            // ¡IMPORTANTE! La estructura real puede variar. Consulta la documentación de Monetag.
-            // Esto es un ejemplo de cómo suelen funcionar estas APIs.
-            var monetagRewarded = {
-                onComplete: () => {
-                    console.log('Anuncio completado. El usuario ha ganado la recompensa.');
-                    sendTelegramMessage(telegramUser);
-                },
-                onClose: () => {
-                    console.log('El anuncio se ha cerrado.');
-                    rewardButton.disabled = false;
-                    rewardButton.textContent = 'Consigue 20 mensajes';
-                },
-                onError: () => {
-                    console.error('Ha ocurrido un error al cargar el anuncio.');
-                    rewardButton.disabled = false;
-                    rewardButton.textContent = 'Error, intenta de nuevo';
-                }
-            };
-            
-            // 5. Asignar el evento al botón
-            rewardButton.addEventListener('click', () => {
-                console.log('Botón pulsado. Solicitando anuncio recompensado...');
-                rewardButton.disabled = true;
-                rewardButton.textContent = 'Cargando...';
-
-                // Llama al SDK de Monetag
-                if (typeof ophoacit !== 'undefined' && typeof ophoacit.rewarded !== 'undefined') {
-                    // Esta es la llamada real que deberías usar
-                    ophoacit.rewarded.show({
-                        zoneId: MONETAG_ZONE_ID,
-                        onComplete: monetagRewarded.onComplete,
-                        onClose: monetagRewarded.onClose,
-                        onError: monetagRewarded.onError,
-                    });
-                } else {
-                    // Simulación para probar sin el SDK de Monetag
-                    console.warn('SDK de Monetag no encontrado. Ejecutando simulación de prueba.');
-                    setTimeout(() => {
-                        monetagRewarded.onComplete(); // Simula que la recompensa se concedió tras 5 segundos
-                    }, 5000);
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+        <div id="end-screen" class="screen hidden">
+            <h2>Fin del Juego</h2>
+            <p>P
